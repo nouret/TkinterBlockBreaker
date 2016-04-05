@@ -1,4 +1,5 @@
 import tkinter
+from math import *
 
 size = 600
 XCircle = 300
@@ -6,8 +7,8 @@ YCircle = 300
 XRectangle = 300
 r = 25
 d = 30
-DXCircle = 2
-DYCircle = 3
+DXCircle = 4
+DYCircle = 7
 
 def key(event):
 	print("pressed", event	)
@@ -46,14 +47,17 @@ def rectanglemove(event):
 	canvas.update()
 
 def move():
-	global XCircle, YCircle, XRectangle
+	global XCircle, YCircle, XRectangle, DXCircle, DYCircle
 	XCircle += DXCircle
 	YCircle += DYCircle
 	canvas.coords(circle, XCircle - r, YCircle - r, XCircle + r, YCircle + r)
 	if YCircle <= r:
 		DownHit()
-	if size - r <= YCircle or (XRectangle - 3 * r <= XCircle <= XRectangle + 3 * r and size - r - d <= YCircle):
+	if size - r <= YCircle and not(XRectangle - 3 * r <= XCircle <= XRectangle + 3 * r and size - r - d <= YCircle):
 		UpHit()
+	if (XRectangle - 3 * r <= XCircle <= XRectangle + 3 * r and size - r - d <= YCircle):
+		alpha = (XCircle - XRectangle + 3 * r) * pi / (6 * r)
+		DXCircle, DYCircle = -cos(alpha) * sqrt(DXCircle ** 2 + DYCircle ** 2), -sin(alpha) * sqrt(DXCircle ** 2 + DYCircle ** 2)
 	if XCircle <= r:
 		LeftHit()
 	if size - r <= XCircle:
@@ -64,9 +68,17 @@ def move():
 root = tkinter.Tk()
 canvas = tkinter.Canvas(root, width=size, height=size)
 canvas.bind("<Motion>", rectanglemove)
+
 canvas.pack()
 circle = canvas.create_oval(XCircle-r, YCircle-r, XCircle+r, YCircle+r, fill='red')
 rectangle = canvas.create_rectangle(XRectangle - 3 * r, size, XRectangle + 3 * r, size - d, fill = "green")
 helpcircle = canvas.create_oval(10, 20, 20, 30, fill='green')
 root.after(50, move)
+
+def f(x):
+	print(x)
+
+root.bind("a", f)
+
+#print(help(canvas.bind))
 root.mainloop()
